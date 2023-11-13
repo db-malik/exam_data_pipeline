@@ -1,5 +1,5 @@
 import logging
-from utils import csv_to_dataframe, average_delay_per_airport,flight_count_per_carrier,route_analysis,average_flights_per_day_of_week, average_flights_per_day_of_month, save_to_csv
+from utils import csv_to_dataframe, average_delay_per_airport,flight_count_per_carrier,route_analysis,average_flights_per_day_of_week, average_flights_per_day_of_month, delays_over_time_by_airline, average_delay_by_airport, save_to_csv
 from utils.analyse_data_functions import route_analysis
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
@@ -47,6 +47,16 @@ try:
         # Analyze and save average flights per day of the month
         flights_per_day_of_month_df = average_flights_per_day_of_month(merged_flights_data)
         save_to_csv(flights_per_day_of_month_df, path_to_export_folder, 'flights_per_day_of_month' )
+
+        # # Analyze and save average flights per day of the month
+        # delays_over_time , airline_name = analyze_airline_data(merged_flights_data, "DL")
+        # save_to_csv(delays_over_time, path_to_export_folder, f'delays_over_time_for_{airline_name}_airligne' )
+
+
+
+        # # Utilisation de la fonction avec le nom de la compagnie aérienne "DL" (Delta Airlines)
+        # average_delay_per_airport_df, airline_name = average_delay_by_airport(merged_flights_data, "DL")
+        # save_to_csv(average_delay_per_airport_df, path_to_export_folder, f'average_delay_per_airport_for_{airline_name}_airligne' )
 
 
 except Exception as e:
