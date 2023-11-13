@@ -7,7 +7,6 @@ from pyspark.sql import SparkSession
 # Configure logging to only show error messages
 logging.basicConfig(level=logging.ERROR)
 
-
 absolute_path = '/home/malek/airflow/'
 
 # Specify absolute paths to the CSV files
@@ -20,8 +19,7 @@ sc = SparkContext("local", "dataF_frame_titanic")
 sc.setLogLevel('ERROR')
 spark = SparkSession.builder.appName("DataIngestion").getOrCreate()
    
-   
-    
+
 try:
         
         # Read CSV data into PySpark DataFrames using the function from utils
@@ -47,16 +45,6 @@ try:
         # Analyze and save average flights per day of the month
         flights_per_day_of_month_df = average_flights_per_day_of_month(merged_flights_data)
         save_to_csv(flights_per_day_of_month_df, path_to_export_folder, 'flights_per_day_of_month' )
-
-        # # Analyze and save average flights per day of the month
-        # delays_over_time , airline_name = analyze_airline_data(merged_flights_data, "DL")
-        # save_to_csv(delays_over_time, path_to_export_folder, f'delays_over_time_for_{airline_name}_airligne' )
-
-
-
-        # # Utilisation de la fonction avec le nom de la compagnie aérienne "DL" (Delta Airlines)
-        # average_delay_per_airport_df, airline_name = average_delay_by_airport(merged_flights_data, "DL")
-        # save_to_csv(average_delay_per_airport_df, path_to_export_folder, f'average_delay_per_airport_for_{airline_name}_airligne' )
 
 
 except Exception as e:

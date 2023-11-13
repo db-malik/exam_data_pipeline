@@ -1,73 +1,60 @@
 from pyspark.ml import Pipeline
-from pyspark.ml.feature import VectorAssembler, StringIndexer, OneHotEncoder
-from pyspark.ml.classification import LogisticRegression
-from pyspark.ml.evaluation import BinaryClassificationEvaluator
-from pyspark import SparkContext
+from pyspark.ml.feature import StringIndexer, VectorAssembler
+from pyspark.ml.classification import RandomForestClassifier
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.sql import SparkSession
+from pyspark import SparkContext
 from utils import csv_to_dataframe
-from spark.python.pyspark.sql.connect.plan import Limit
-import logging
-from scripts.utils.export_data_functions import save_to_csv
 
-absolute_path = '/home/malek/airflow/'
 
-# Specify absolute paths to the CSV files
-paths_to_merged_data = f"{absolute_path}merged_data/merged_flights_data.csv"
-print( paths_to_merged_data)   
-path_to_export_folder = f"{absolute_path}a_predections"
-
+# Create a Spark session
 # Create a Spark session and Initialize Spark
 sc = SparkContext("local", "dataF_frame_titanic")
+spark = SparkSession.builder.appName("Mlib").getOrCreate()
 sc.setLogLevel('ERROR')
-spark = SparkSession.builder.appName("DataIngestion").getOrCreate()
 
-
+# Specify absolute paths to the CSV files
+absolute_path = '/home/malek/airflow/'
+paths_to_merged_data = f"{absolute_path}merged_data/merged_flights_data.csv"
 
 # Load the data
 merged_flights_data = csv_to_dataframe(spark, paths_to_merged_data, "merged_flights_data")
+merged_flights_data.printSchema()
 
-# Create a target column (1 for delayed, 0 for not delayed)
-df = merged_flights_data.withColumn("target", (merged_flights_data["ArrDelay"] > 0).cast("integer"))
+# Convert labels to numerical indices
+indexer = StringIndexer(inputCol="ArrDelay", outputCol="label")
+indexed_data = indexer.fit(merged_flights_data).transform(merged_flights_data)
 
-# Display the first 10 rows of the DataFrame
-df.show(10)
+# Define the columns to use as features
+feature_columns = ["DestAirportID", "OriginAirportID", "DayofMonth", "DayOfWeek", "DepDelay"]
 
-# Create a VectorAssembler to assemble the features
-feature_cols = ["DayofMonth", "DayOfWeek", "DepDelay", "OriginAirportID", "DestAirportID"]
-vector_assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
-# Display the first 10 rows of the DataFrame
+# Create a VectorAssembler
+vector_assembler = VectorAssembler(inputCols=feature_columns, outputCol="features")
 
+# Create a RandomForestClassifier for multiclass classification
+random_forest = RandomForestClassifier(labelCol='label', featuresCol='features', numTrees=10)
 
-# Create a StringIndexer to encode the "Carrier" column
-carrier_indexer = StringIndexer(inputCol="Carrier", outputCol="CarrierIndex")
+# Create a pipeline
+pipeline = Pipeline(stages=[vector_assembler, random_forest])
 
-# Create a OneHotEncoder to encode the "CarrierIndex" column
-carrier_encoder = OneHotEncoder(inputCol="CarrierIndex", outputCol="CarrierVec")
-
-# Create a logistic regression model
-lr = LogisticRegression(featuresCol="features", labelCol="target")
-
-# Create a pipeline with the steps
-pipeline = Pipeline(stages=[vector_assembler, carrier_indexer, carrier_encoder, lr])
-
-# Create a pipeline with the steps
-train_data, test_data = df.randomSplit([0.8, 0.2], seed=42)
+# Split the data into training and test sets
+(training_data, test_data) = indexed_data.randomSplit([0.8, 0.2], seed=123)
 
 # Train the model
-model = pipeline.fit(train_data)
+model = pipeline.fit(training_data)
+
+# Get feature importances
+feature_importances = model.stages[-1].featureImportances
+
+# Display feature importances
+print("Feature Importances:")
+for i, (col, importance) in enumerate(zip(feature_columns, feature_importances)):
+    print(f"{i + 1}. Feature {col}: {importance}")
 
 # Make predictions on the test set
 predictions = model.transform(test_data)
-predictions.collect()
 
-logging.info(predictions.show())
-
-save_to_csv(predictions, path_to_export_folder, 'predections')
-
-
-# Evaluate the model
-evaluator = BinaryClassificationEvaluator(labelCol="target", rawPredictionCol="rawPrediction", metricName="areaUnderROC")
-auc = evaluator.evaluate(predictions)
-
-logging.info(f"Area under ROC curve: {auc}")
-
+# Evaluate model performance
+evaluator = MulticlassClassificationEvaluator(labelCol='label', predictionCol='prediction', metricName='accuracy')
+accuracy = evaluator.evaluate(predictions)
+print(f"Model Accuracy on Test Set: {accuracy}")

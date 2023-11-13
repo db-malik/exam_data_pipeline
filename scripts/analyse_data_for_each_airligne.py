@@ -11,7 +11,7 @@ absolute_path = '/home/malek/airflow/'
 
 # Specify absolute paths to the CSV files
 paths_to_merged_data = f"{absolute_path}merged_data/merged_flights_data.csv"
-print( paths_to_merged_data)   
+
 
 path_to_export_folder = f"{absolute_path}analysis_data/airlignes/"
 
