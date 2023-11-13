@@ -1,0 +1,19 @@
+# requirements.txt
+
+# Apache Spark for distributed data processing
+pyspark==3.2.0
+
+# Apache Airflow for orchestrating the data pipeline
+apache-airflow==2.2.3
+
+# PySpark SQL functions for data manipulation
+pyspark.sql==3.2.0
+
+# NumPy for numerical operations
+numpy==1.21.0
+
+# Pandas for data manipulation and analysis
+pandas==1.3.0
+
+# Scikit-learn for machine learning
+scikit-learn==0.24.2

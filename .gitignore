@@ -1,0 +1,20 @@
+# Dossiers à exclure
+airflow_env/
+logs/
+airflow.db
+standalone_admin_password.txt
+webserver_config.py
+data/
+spark/
+
+# Fichiers à exclure
+*.log
+*.csv
+*.json
+*.pkl
+*.ipynb
+*.pyc
+__pycache__/
+airflow.db
+airflow.cfg
+airflow-webserver.pid
