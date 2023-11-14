@@ -13,7 +13,6 @@ with DAG(dag_id="flight_pipeline",
          schedule_interval="0 0 * * *",  # Run every day at midnight
          catchup=False) as dag:
   
-        
 
         load_data = BashOperator(
             task_id='load_data',

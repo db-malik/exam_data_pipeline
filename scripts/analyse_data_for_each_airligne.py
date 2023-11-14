@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+import os
 from pyspark.sql.functions import col
 from utils import csv_to_dataframe, average_delay_by_airport, delays_over_time_by_airline, average_delay_by_airport, save_to_csv
 from pyspark import SparkContext
@@ -6,12 +8,12 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 
 
-absolute_path = '/home/malek/airflow/'
+load_dotenv()
+
+absolute_path = os.getenv("ABSOLUTE_PATH")
 
 # Specify absolute paths to the CSV files
 paths_to_merged_data = f"{absolute_path}merged_data/merged_flights_data.csv"
-
-
 path_to_export_folder = f"{absolute_path}analysis_data/airlignes/"
 
 # Create a Spark session and Initialize Spark

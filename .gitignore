@@ -9,6 +9,7 @@ spark/
 
 
 # Fichiers à exclure
+*.env
 *.log
 *.csv
 *.json

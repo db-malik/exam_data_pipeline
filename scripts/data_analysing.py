@@ -1,4 +1,6 @@
 import logging
+from dotenv import load_dotenv
+import os
 from utils import csv_to_dataframe, average_delay_per_airport,flight_count_per_carrier,route_analysis,average_flights_per_day_of_week, average_flights_per_day_of_month, delays_over_time_by_airline, average_delay_by_airport, save_to_csv
 from utils.analyse_data_functions import route_analysis
 from pyspark import SparkContext
@@ -7,11 +9,14 @@ from pyspark.sql import SparkSession
 # Configure logging to only show error messages
 logging.basicConfig(level=logging.ERROR)
 
-absolute_path = '/home/malek/airflow/'
+load_dotenv()
+
+absolute_path = os.getenv("ABSOLUTE_PATH")
+
 
 # Specify absolute paths to the CSV files
 paths_to_merged_data = f"{absolute_path}merged_data/merged_flights_data.csv"
-print( paths_to_merged_data)   
+
 path_to_export_folder = f"{absolute_path}analysis_data"
 
 # Create a Spark session and Initialize Spark
