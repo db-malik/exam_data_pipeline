@@ -1,7 +1,7 @@
 from .csv_to_dataframe import csv_to_dataframe
 from .data_imputation_functions import impute_mean
 from .merge_data_function import merge_flights_with_airports
-from .data_cleaning_functions import check_missing_values, drop_duplicates_and_describe, check_for_nulls
+from .data_cleaning_functions import fill_missing_with_mean, drop_duplicates_and_describe, check_for_nulls
 from .analyse_data_functions import  average_delay_per_airport, flight_count_per_carrier, route_analysis, average_flights_per_day_of_week, average_flights_per_day_of_month
 from .export_data_functions import  save_to_csv
 from .analyze_airline_data import  delays_over_time_by_airline, average_delay_by_airport

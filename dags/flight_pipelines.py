@@ -7,6 +7,7 @@ import os
 current_folder = os.getcwd()
 
 
+
 with DAG(dag_id="flight_pipeline",
          start_date=datetime(2023,10,10),
          schedule_interval="0 0 * * *",  # Run every day at midnight

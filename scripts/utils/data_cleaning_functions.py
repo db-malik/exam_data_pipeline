@@ -1,12 +1,18 @@
-from pyspark.sql.functions import count, when, col
+from pyspark.sql.functions import count, when, col,  mean
 
 
-def check_missing_values(dataframe):
+
+def fill_missing_with_mean(dataframe, column_name):
     """
-    Check and display the count of missing values in each column of a DataFrame.
+    Fill missing values in a specific column with the mean value.
     """
-    return dataframe.select([count(when(col(c).isNull(), c)).alias(c) for c in dataframe.columns])
+    # Calculate the mean of the specified column
+    mean_value = dataframe.select(mean(col(column_name))).collect()[0][0]
 
+    # Fill missing values with the calculated mean
+    filled_dataframe = dataframe.withColumn(column_name, when(col(column_name).isNull(), mean_value).otherwise(col(column_name)))
+
+    return filled_dataframe
 
 # drop duplicates
 def drop_duplicates_and_describe(dataframe):

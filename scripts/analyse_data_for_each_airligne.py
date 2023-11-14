@@ -1,9 +1,8 @@
 from pyspark.sql.functions import col
 from utils import csv_to_dataframe, average_delay_by_airport, delays_over_time_by_airline, average_delay_by_airport, save_to_csv
-import logging
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
-
+import logging
 logging.basicConfig(level=logging.ERROR)
 
 

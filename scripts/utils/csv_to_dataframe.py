@@ -15,6 +15,7 @@ def csv_to_dataframe(spark, csv_path, dataframe_name):
     """
     try:
         df = spark.read.csv(csv_path, header=True, inferSchema=True)
+        df.createOrReplaceTempView(dataframe_name)
         return df
     except Exception as e:
         logging.error(f"Error occurred while reading CSV: {str(e)}")
