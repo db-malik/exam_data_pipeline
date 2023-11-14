@@ -7,8 +7,6 @@ from pyspark.sql.functions import col
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 
-import sys
-sys.path.append('/home/malek/airflow/')
 
 # Configure logging to only show error messages
 logging.basicConfig(level=logging.ERROR)
@@ -29,9 +27,7 @@ sc = SparkContext("local", "dataF_frame_titanic")
 sc.setLogLevel('ERROR')
 spark = SparkSession.builder.appName("DataIngestion").getOrCreate()
 
-
-# def data_loading(absolute_paths, spark):
-   
+  
 try:
         # Read CSV data into PySpark DataFrames using the function from utils
         airports_data = csv_to_dataframe(spark, airports_csv_path, "airports_dataframe")
@@ -58,7 +54,7 @@ try:
         raw_flights_data.describe().show()
       
 
-        # calculate a briaf summary of input data (airports raw flight and flight)
+        # calculate a brief summary of input data (airports raw flight and flight)
         flights_data_summary = flights_data.summary()
         airports_data_summary = airports_data.summary()
         raw_flights_data_summary  = raw_flights_data.summary()
@@ -102,7 +98,7 @@ try:
         # ---------------------- merge data begins  --------------------------------------------
 
       
-        # merged_data = merge_flights_with_airports(flights_data, airports_data)
+        # Join DataFrames on the respective columns for origin airport
         merged_data = flights_data.join(airports_data.withColumnRenamed("airport_id", "origin_airport_id"),
                                 flights_data["OriginAirportID"] == col("origin_airport_id"),
                                 "left_outer")
@@ -116,12 +112,12 @@ try:
         # Drop the duplicate columns resulting from the join
         merged_data = merged_data.drop("origin_airport_id")
         
-        # # Join DataFrames on the respective columns for destination airport
+        # Join DataFrames on the respective columns for destination airport
         merged_data = merged_data.join(airports_data.withColumnRenamed("airport_id", "dest_airport_id"),
                                merged_data["DestAirportID"] == col("dest_airport_id"),
                                "left_outer")
 
-        # # Rename columns for destination airport
+        # Rename columns for destination airport
         merged_data = merged_data.withColumnRenamed("city", "dest_city") \
                          .withColumnRenamed("state", "dest_state") \
                          .withColumnRenamed("name", "dest_name")
@@ -140,13 +136,12 @@ try:
         merged_data.show()
         merged_data.describe().show()
         merged_data_sample  = merged_data.limit(10)
+
         # save merged_data  in csv file
         save_to_csv(merged_data_sample, f"{absolute_path}merged_data", "merged_flights_data_sample")
         save_to_csv(merged_data, f"{absolute_path}merged_data", "merged_flights_data")
 
 
-
-    
 except Exception as e:
         logging.error(f"Error occurred: {str(e)}")
 

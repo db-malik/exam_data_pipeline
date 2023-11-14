@@ -29,6 +29,7 @@ def average_delay_per_airport(data):
 
 
 def flight_count_per_carrier(data):
+    
     # Calculate the number of flights per carrier
     flight_count_df = data.groupBy("Carrier").agg(count("*").alias("FlightCount"))
 

@@ -29,7 +29,7 @@ try:
         
         # Read CSV data into PySpark DataFrames using the function from utils
         merged_flights_data = csv_to_dataframe(spark, paths_to_merged_data, "merged_flights_data")
-        # Analysing data and save reports to csv files  
+ 
 
         # Analyze and save average delay per airport
         average_delay = average_delay_per_airport(merged_flights_data)
