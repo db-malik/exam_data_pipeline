@@ -39,7 +39,6 @@ feature_cols = ["DayofMonth", "DayOfWeek", "DepDelay", "OriginAirportID", "DestA
 vector_assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
 
 
-
 # Create a StringIndexer to encode the "Carrier" column
 carrier_indexer = StringIndexer(inputCol="Carrier", outputCol="CarrierIndex")
 
@@ -64,7 +63,7 @@ predictions.collect()
 
 logging.info(predictions.show())
 
-save_to_csv(predictions, path_to_export_folder, 'predections')
+save_to_csv(predictions.limit(10), path_to_export_folder, 'predections')
 
 
 # Evaluate the model
