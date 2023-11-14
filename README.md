@@ -35,6 +35,22 @@ Ensure that you have the following tools installed on your local system:
 - Apache Spark
 - Apache Airflow
 
+
+## Environment Variables
+
+Before running the script, make sure to set up the following environment variables in a `.env` file located in the root directory of your project. Here's an example of the required variables:
+
+### Description:
+
+  - ABSOLUTE_PATH: The absolute path to the main directory of your project.
+
+  - AIRPORTS_CSV_PATH: The absolute path to the CSV file containing airports data.
+
+  - FLIGHTS_CSV_PATH: The absolute path to the CSV file containing flights data.
+
+  - RAW_FLIGHT_DATA_PATH: The absolute path to the CSV file containing raw flight data.
+
+
 ## Project Structure
 
 ```plaintext
